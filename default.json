@@ -10,6 +10,7 @@
   "customCommand": {
     "enable": true,
     "prefix": ".a",
+    "c": [],
     "a": {
       "b": {
         "v": true
