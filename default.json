@@ -2,5 +2,9 @@
   "confidential": {
     "owner": "",
     "password": ""
+  },
+  "region": {
+    "area": "vi-VN",
+    "language": "vi-VN"
   }
 }
