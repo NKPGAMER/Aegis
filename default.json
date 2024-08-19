@@ -9,6 +9,16 @@
   },
   "customCommand": {
     "enable": true,
-    "prefix": ".a"
+    "prefix": ".a",
+    "a": {
+      "b": {
+        "v": true
+      },
+      "c": {
+        "d": {
+          "m": true
+        }
+      }
+    }
   }
 }
