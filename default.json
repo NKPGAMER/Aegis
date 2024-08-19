@@ -6,5 +6,9 @@
   "region": {
     "area": "vi-VN",
     "language": "vi-VN"
+  },
+  "customCommand": {
+    "enable": true,
+    "prefix": ".a"
   }
 }
