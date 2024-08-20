@@ -1,7 +1,8 @@
 {
   "confidential": {
     "owner": "Hello World",
-    "password": ""
+    "password": "",
+    "count": 1
   },
   "region": {
     "area": "vi-VN",
