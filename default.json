@@ -11,7 +11,11 @@
   "customCommand": {
     "enable": true,
     "prefix": ".a",
-    "c": [],
+    "c": [
+      "a",
+      "b",
+      "c"
+    ],
     "a": {
       "b": {
         "v": true
