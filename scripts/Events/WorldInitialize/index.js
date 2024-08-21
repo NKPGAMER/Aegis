@@ -1,7 +1,3 @@
 import ConfigHandling from "./ConfigHandling";
 
-function run() {
-  ConfigHandling()
-}
-
-Aegis.events.subscribe()
+Aegis.events.subscribe('after', 'worldInitialize', ConfigHandling);

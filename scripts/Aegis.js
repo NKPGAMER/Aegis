@@ -18,12 +18,14 @@ globalThis['Aegis'] = (aegis => {
   
   aegis['runCommandAsync'] = (command) => aegis['defaultDimension'].runCommandAsync(command);
   
-  aegis['event'] = {
+  aegis['events'] = {
     subscribe: EventSubscribe,
     unsubscribe: EventUnsubscribe
   }
   
   aegis['ServerType'] = (() => world.getAllPlayers().filter(({ id }) => id === '-4294967295' || id === '-206158430207').length > 0 ? 'local' : 'server' )();
+
+  aegis['config'] = new Database('config');
 
   aegis['Database'] = Database;
   
