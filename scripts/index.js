@@ -1,18 +1,17 @@
-import './Events/WorldInitialize/index';
-
-const Plugins = [
+const plugins = [
   'Events/WorldInitialize/index'
-]
+];
 
-Plugins.forEach(importPlugin);
+const startTime = Date.now();
 
-function importPlugin(path) {
-  try {
-    import(path);
-    console.info(`Import ${path}....success`);
-  } catch (error) {
-    console.error(`Import ${path}....fail.\nError: ${error?.toString() ?? error}`);
-  };
-}
+Promise.allSettled(plugins.map(plugin => import(plugin))).then(results => {
+  results.forEach((result, index) => {
+    if (result.status === 'fulfilled') {
+      console.warn(`Plugin ${plugins[index]} loaded successfully.`);
+    } else {
+      console.error(`Failed to load plugin ${plugins[index]}: ${result?.reason?.toString() ?? result?.reason}`);
+    }
+  });
+});
 
-console.warn("§aOK");
+console.warn(`Done! [Processing time]: ${Date.now() - startTime}`);
