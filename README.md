@@ -28,7 +28,7 @@ Chỉnh sửa file `config.json` trong thư mục plugin để tùy chỉnh:
 - `/aegis logs`: Xem nhật ký vi phạm
 
 ## Hỗ trợ
-Nếu bạn gặp vấn đề hoặc có đề xuất, vui lòng tạo issue trên [GitHub repository]([https://github.com/NKPGAMER/Aegis]).
+Nếu bạn gặp vấn đề hoặc có đề xuất, vui lòng tạo issue trên [GitHub repository](https://github.com/NKPGAMER/Aegis).
 
 ## Giấy phép
 Aegis Anti Cheat được phát hành dưới giấy phép MIT. Xem file `LICENSE` để biết thêm chi tiết.
