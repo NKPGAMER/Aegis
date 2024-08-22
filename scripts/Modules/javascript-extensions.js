@@ -6,16 +6,16 @@
  * Array.js
  */
 
-if(!Array.prototype.includesObject) {
-  Array.prototype.includesObject = function(value) { return this.some((element) => Object.keys(value).every((key) => element[key] === value[key])) }
+if (!Array.prototype.includesObject) {
+  Array.prototype.includesObject = function (value) { return this.some((element) => Object.keys(value).every((key) => element[key] === value[key])); };
 }
 
-if(!Array.prototype.delete) {
-  Array.prototype.delete = function(index) {
+if (!Array.prototype.delete) {
+  Array.prototype.delete = function (index) {
     if (index > -1) {
       this.splice(index, 1);
     }
-  }
+  };
 }
 
 /*
@@ -34,22 +34,22 @@ Object.defineProperties(console, {
   warn: { value: createLogMethod("warn", warn) },
   error: { value: createLogMethod("error", error) },
   info: { value: createLogMethod("info", info) },
-  
+
   classError: {
     value(className, functionName, error) {
       const stack = `[${className}::${functionName}]`;
       let errorMessage = 'undefined';
-      
+
       if (error instanceof Error) {
         errorMessage = `${error.message.replace(info, '').trim()} ${error.stack.trim()}`;
       } else if (typeof error === 'string') {
         errorMessage = error;
       }
-      
+
       console.error(`${stack} ${errorMessage}`);
     }
   },
-  
+
   getLogs: { value: () => Logs }
 });
 
@@ -58,44 +58,44 @@ Object.defineProperties(console, {
  */
 
 if (!Date.prototype.isLeapYear) {
-  Date.prototype.isLeapYear = function() {
+  Date.prototype.isLeapYear = function () {
     const year = this.getFullYear();
     return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
-  }
+  };
 }
 
 if (!Date.prototype.addDay) {
-  Date.prototype.addDay = function(value) {
-    if(typeof value != 'number') throw new TypeError();
+  Date.prototype.addDay = function (value) {
+    if (typeof value != 'number') throw new TypeError();
     this.setDate(this.getDate() + value);
-  }
+  };
 }
 
 if (!Date.prototype.addHours) {
-  Date.prototype.addHours = function(value) {
-    if(typeof value != 'number') throw new TypeError();
+  Date.prototype.addHours = function (value) {
+    if (typeof value != 'number') throw new TypeError();
     this.setHours(this.getHours() + value);
     return this;
-  }
+  };
 }
 
 if (!Date.prototype.addMilliseconds) {
-  Date.prototype.addMilliseconds = function(value) {
-    if(typeof value != 'number') throw new TypeError();
+  Date.prototype.addMilliseconds = function (value) {
+    if (typeof value != 'number') throw new TypeError();
     this.setMilliseconds(this.getMilliseconds() + value);
-  }
+  };
 }
 
 if (!Date.prototype.addMinutes) {
-  Date.prototype.addMinutes = function(value) {
-    if(typeof value != 'number') throw new TypeError();
+  Date.prototype.addMinutes = function (value) {
+    if (typeof value != 'number') throw new TypeError();
     this.setMinutes(this.getMinutes() + value);
     return this;
-  }
+  };
 }
 
 if (!Date.prototype.addMonths) {
-  Date.prototype.addMonths = function(value) {
+  Date.prototype.addMonths = function (value) {
     if (typeof value != 'number') throw new TypeError();
     this.setMonth(this.getMonth() + value);
     return this;
@@ -103,7 +103,7 @@ if (!Date.prototype.addMonths) {
 }
 
 if (!Date.prototype.addSeconds) {
-  Date.prototype.addSeconds = function(value) {
+  Date.prototype.addSeconds = function (value) {
     if (typeof value != 'number') throw new TypeError();
     this.setSeconds(this.getSeconds() + value);
     return this;
@@ -111,7 +111,7 @@ if (!Date.prototype.addSeconds) {
 }
 
 if (!Date.prototype.addYears) {
-  Date.prototype.addYears = function(value) {
+  Date.prototype.addYears = function (value) {
     if (typeof value != 'number') throw new TypeError();
     this.setFullYear(this.getFullYear() + value);
     return this;
@@ -139,42 +139,42 @@ Object.defineProperties(Error.prototype, {
  */
 
 Object.defineProperties(Map.prototype, {
-    merge: {
-        value: function(map, replaceExisting) {
-            const mergedMap = new Map([...this]);
-            for (const [key, value] of map) {
-                if (!replaceExisting && mergedMap.has(key)) continue;
-                mergedMap.set(key, value);
-            }
-            return mergedMap;
-        }
-    },
-    find: {
-        value: function(callback) {
-            for (const [key, value] of this) {
-                if (callback(value, key, this)) {
-                    return value;
-                }
-            }
-            return undefined;
-        }
-    },
-    deleteKeyRegex: {
-        value: function(regex) {
-            this.forEach((value, key) => {
-                if (key.match(regex)) this.delete(key);
-            });
-        }
-    },
-    shift: {
-      value: (function () {
-        const firstKey = this.keys().next().value;
-        const firstValue = this.get(firstKey);
-        this.delete(firstKey);
-        
-        return [ firstKey, firstValue ];
-      })
+  merge: {
+    value: function (map, replaceExisting) {
+      const mergedMap = new Map([...this]);
+      for (const [key, value] of map) {
+        if (!replaceExisting && mergedMap.has(key)) continue;
+        mergedMap.set(key, value);
+      }
+      return mergedMap;
     }
+  },
+  find: {
+    value: function (callback) {
+      for (const [key, value] of this) {
+        if (callback(value, key, this)) {
+          return value;
+        }
+      }
+      return undefined;
+    }
+  },
+  deleteKeyRegex: {
+    value: function (regex) {
+      this.forEach((value, key) => {
+        if (key.match(regex)) this.delete(key);
+      });
+    }
+  },
+  shift: {
+    value: (function () {
+      const firstKey = this.keys().next().value;
+      const firstValue = this.get(firstKey);
+      this.delete(firstKey);
+
+      return [firstKey, firstValue];
+    })
+  }
 });
 
 
@@ -184,29 +184,29 @@ Object.defineProperties(Map.prototype, {
 const { floor, hypot, max, min } = Math;
 
 if (!Math.randomInt) {
-  Math.randomInt = function(min, max) {
+  Math.randomInt = function (min, max) {
     return floor(Math.random() * (max - min + 1)) + min;
-  }
+  };
 }
 
 if (!Math.average) {
-  Math.average = function(numbers) {
+  Math.average = function (numbers) {
     if (!Array.isArray(numbers) || !numbers.length) return;
-    
+
     return numbers.reduce((sum, num) => sum + (typeof num === 'number' ? num : 0), 0) / numbers.length;
-  }
+  };
 }
 
 if (!Math.tickToSecond) {
-  Math.tickToSecond = function(ticks) {
+  Math.tickToSecond = function (ticks) {
     return ticks / 20;
-  }
+  };
 }
 
 if (!Math.secondToTick) {
-  Math.secondToTick = function(seconds) {
+  Math.secondToTick = function (seconds) {
     return seconds * 20;
-  }
+  };
 }
 
 Object.defineProperties(Math, {
@@ -261,92 +261,96 @@ Object.defineProperties(Math, {
  * Number.js
  */
 
-if(!Number.prototype.ticksToSeconds) {
-  Number.prototype.ticksToSeconds = function() { return this / 20 }
+if (!Number.prototype.ticksToSeconds) {
+  Number.prototype.ticksToSeconds = function () { return this / 20; };
 }
 
-if(!Number.prototype.secondsToTicks) {
-  Number.prototype.secondsToTicks = function() { return this * 20 }
+if (!Number.prototype.secondsToTicks) {
+  Number.prototype.secondsToTicks = function () { return this * 20; };
 }
 
 /*
  * Object.js
  */
-if(!Object.prototype.equal) {
-  Object.prototype.equal = function(obj) {
-    if(!(obj instanceof Object)) return false;
+if (!Object.prototype.equal) {
+  Object.prototype.equal = function (obj) {
+    if (!(obj instanceof Object)) return false;
     const props1 = Object.getOwnPropertyNames(this);
     const props2 = Object.getOwnPropertyNames(obj);
     if (props1.length !== props2.length) return false;
-    
+
     return props1.every(propName => this[propName] === obj[propName]);
-  }
+  };
 }
 /*
  * String.js
  */
 
-if(!String.randomColor) {
-  String.randomColor = function(str, colors = []) {
-    if(typeof str != 'string' || !Array.isArray(colors) || colors.length == 0) return str;
+if (!String.randomColor) {
+  String.randomColor = function (str, colors = []) {
+    if (typeof str != 'string' || !Array.isArray(colors) || colors.length == 0) return str;
     return this.replace(/§./g, "").split('').map(w => colors[Math.floor(Math.random() * colors.length) || w]).join('');
-  }
+  };
 }
 
-if(!String.isJSON) {
-  String.isJSON = function(str) {
+if (!String.isJSON) {
+  String.isJSON = function (str) {
     try {
       JSON.parse(str);
       return false;
     } catch {
       return true;
     }
-  }
+  };
 }
 
-if(!String.hexToEmoji) {
-  String.hexToEmoji = function(str) {
+if (!String.hexToEmoji) {
+  String.hexToEmoji = function (str) {
     const num = parseInt(str, 16);
     if (isNaN(num) || num < 57344 || num > 63743) return "?";
     return String.fromCharCode(num);
-  }
+  };
 }
 
-if(!String.generateRandomString) {
-  String.generateRandomString = function(length, allowUpperCase = true, allowNumbers = true, allowSpecialChars = true) {
+if (!String.generateRandomString) {
+  String.generateRandomString = function (length, allowUpperCase = true, allowNumbers = true, allowSpecialChars = true) {
     let chars = "abcdefghijklmnopqrstuvwxyz";
     if (allowNumbers) chars += "0123456789";
     if (allowUpperCase) chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     if (allowSpecialChars) chars += "!@#$%^&*()_+-=[]{};:'\"\\|,./<>?";
     return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-  }
+  };
 }
 
-if(!String.generateUUID) {
-  String.generateUUID = function() {
+if (!String.generateUUID) {
+  String.generateUUID = function () {
     const randomPart = Math.random().toString(16).slice(2);
     const timePart = Date.now().toString(16);
     return `${timePart}-${randomPart}-4${randomPart.slice(0, 3)}-9${randomPart.slice(3, 6)}-${randomPart.slice(6, 12)}`;
-  }
+  };
 }
 
-if(!String.toRegex) {
-  String.toRegex = function(str) {
+if (!String.toRegex) {
+  String.toRegex = function (str) {
     const regexPattern = /^\/(.*?)\/([gimsuy]*)$/;
     const match = regexString.match(regexPattern);
-    
+
     if (!match) throw new Error("Invalid regex string format");
     const [_, pattern, flags] = match;
     return new RegExp(pattern, flags);
-  }
+  };
 }
 
 /*
  * function.js
  */
- 
-if(!Function.prototype.forceType) {
-  Function.prototype.forceType = function(...expectedTypes) {
+
+if (!Function.prototype.Empty) {
+  Function.prototype.Empty = function () { };
+}
+
+if (!Function.prototype.forceType) {
+  Function.prototype.forceType = function (...expectedTypes) {
     const originalFunction = this;
     return (...args) => {
       if (!expectedTypes.every((type, i) => checkType(type, args[i]))) {
@@ -358,14 +362,14 @@ if(!Function.prototype.forceType) {
 }
 
 
-if(!Function.prototype.validateArgs) {
-  Function.prototype.validateArgs = function(...ArgumentTypes) {
+if (!Function.prototype.validateArgs) {
+  Function.prototype.validateArgs = function (...ArgumentTypes) {
     const originalFunction = this;
     return (...args) => {
-      if (!ArgumentTypes.every((type, i) => args[i] instanceof Type)) throw new TypeError(`Function "${originalFunction.name || "Anonymous"}" receives incorrect parameters.`)
+      if (!ArgumentTypes.every((type, i) => args[i] instanceof Type)) throw new TypeError(`Function "${originalFunction.name || "Anonymous"}" receives incorrect parameters.`);
       return originalFunction.apply(null, args);
     };
-  }
+  };
 };
 
 const typeChecks = {
