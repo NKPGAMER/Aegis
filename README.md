@@ -8,24 +8,29 @@ Aegis Anti Cheat là một plugin chống gian lận mạnh mẽ được phát 
 - Phát hiện Fly Hack
 - Chống Auto-Click
 - Kiểm tra Reach (tầm với)
-- Chống X-Ray
+- Kiểm tra bot
 - Bảo vệ khỏi Nuker Hack
 
 ## Cài đặt
+### Android
 1. Tải xuống file `Aegis_v1.0-alpha.mcpack`
 2. Mở file bằng Minecraft để cài đặt tự động
 3. Kích hoạt plugin trong cài đặt thế giới
+### iPhone
+1. Tải xuống tệp `Aegis_v1.0-alpha.mcpack`
+2. Mở Ứng dụng `Files`(`Tệp tin`)
+3. Tới vị trí tải xuống
+4. Giải nén tệp `Aegis_v1.0-alpha.mcpack`
+5. Sao chép thư mục vừa giải nén
+6. Đi tới `Trên iPhone`
 
 ## Cấu hình
-Chỉnh sửa file `config.json` trong thư mục plugin để tùy chỉnh:
-- Ngưỡng phát hiện
-- Hình phạt cho người chơi vi phạm
-- Bật/tắt các module riêng lẻ
+Có thể cấu hình trước khi tải hoặc đi tới `aegis/scripts/Data` và mở tệp `config.js` để cấu hình.
 
 ## Lệnh
-- `/aegis status`: Kiểm tra trạng thái plugin
-- `/aegis reload`: Tải lại cấu hình
-- `/aegis logs`: Xem nhật ký vi phạm
+- `!aegis status`: Kiểm tra trạng thái plugin
+- `!aegis reload`: Tải lại cấu hình
+- `!aegis logs`: Xem nhật ký vi phạm
 
 ## Hỗ trợ
 Nếu bạn gặp vấn đề hoặc có đề xuất, vui lòng tạo issue trên [GitHub repository](https://github.com/NKPGAMER/Aegis).
