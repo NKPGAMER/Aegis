@@ -1,5 +1,10 @@
-export default ((tags) => {
-  // Disable feature
-  tags['breakBlock-disable'] = 'aegis:disable-breakBlock';
-  tags['placeBlock-disable'] = 'aegis:disable-place+block'
-})({})
+export default {
+  "disable": {
+    "breakBlock": "001",
+    "placeBlock": "002",
+    "sendMessage": "003"
+  },
+  "animation": {
+    
+  }
+}
