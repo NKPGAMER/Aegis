@@ -1,10 +1,6 @@
 export default {
-  "disable": {
-    "breakBlock": "001",
-    "placeBlock": "002",
-    "sendMessage": "003"
-  },
-  "animation": {
-    
-  }
+  "disable-breakBlock": "aegis:29001",
+  "disable-placeBlock": "aegis:29002",
+  "disable-sendMessage": "aegis:29003",
+  "disanle-intteract": "aegis:29004"
 }
