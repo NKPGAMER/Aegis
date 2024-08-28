@@ -4,23 +4,35 @@
     "name": "§l§eAegis §fAnti-Cheat",
     "description": "§eVersion: §cAlpha 1.0",
     "min_engine_version": [ 1, 20, 80 ],
-    "uuid": "01913d95-7379-7d65-825f-75e9bda71727",
+    "uuid": "1e14d021-f616-4144-a9c4-1e15498c9377",
     "version": [ 1, 0, 0 ]
   },
   "modules": [
     {
       "description": "Data",
       "type": "data",
-      "uuid": "01913d95-7379-7e9d-9ba6-89e9e1565500",
+      "uuid": "3b701ba2-ac0b-4a50-9edf-43ac294b0543",
       "version": [ 1, 0, 0 ]
     },
     {
       "description": "Scripts",
-      "uuid": "01913d95-7379-7eac-855b-db2eb5cfeab9",
+      "uuid": "1911f23f-9207-4cf1-8a9b-ff92b02f3551",
       "type": "script",
       "language": "javascript",
       "entry": "scripts/Aegis.js",
       "version": [ 1, 0, 0 ]
+    }
+  ],
+  "subpacks": [
+    {
+      "name": "default",
+      "folder_name": "default",
+      "memory_tier": 1
+    },
+    {
+      "name": "Clear World",
+      "folder_name": "clear",
+      "memory_tier": 1
     }
   ],
   "settings": [
