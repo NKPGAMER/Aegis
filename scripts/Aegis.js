@@ -5,8 +5,6 @@ import { MemoryCache } from './Assets/MemoryCache';
 globalThis['Aegis'] = (aegis => {
   const AegisPrefix = '§7[§eAegis§7]§r ';
 
-  aegis['AllPlayers'] = world.getAllPlayers();
-
   aegis['sendMessage'] = (value) => {
     const msg = typeof value === 'string'
       ? AegisPrefix + value

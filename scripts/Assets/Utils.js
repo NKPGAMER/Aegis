@@ -11,6 +11,10 @@ const ChangeGameMode = async function (player, mode) {
   }
 }
 
+const isAdmin = (player) => !!player.getDynamicProperty('isAdmin');
+
+const isModerator = (player) => !!this?.getDynamicProperty('isModerator');
+
 const setActionBar = function (player, msg, options) {
   const { id = null, prioritize = false } = options || {};
   const currentTime = Date.now();
@@ -96,7 +100,9 @@ function JsonToItemStack(value) {
 }
 
 export {
-  changeGameMode,
+  ChangeGameMode,
+  isAdmin,
+  isModerator,
   setActionBar,
   getAllItemStack,
   ItemStackToJSON,

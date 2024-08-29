@@ -121,23 +121,23 @@ if (!Date.prototype.addYears) {
 /*
  * Error.js
  */
-Object.defineProperties(Error.prototype, {
-  toString: {
-    value() {
-      const name = this.name ?? "Error";
-      return `${name}: ${this.message.trim()} ${this.stack.trim()}`;
-    }
-  }
-});
+if (!Error.prototype.toString) {
+  Error.prototype.toString = function () {
+    const label = this.class
+      ? this.function
+        ? `[${this.class}::${this.function}]`
+        : `[Class:${this.class}]`
+      : this.function
+        ? `[Function:${this.function}]`
+        : `[Error]`;
+
+    return `${label}: ${this.message.trim()} ${this.stack.trim()}`;
+  };
+}
 
 /*
  * Map.js
  */
-/**
- * @fileoverview Custom Map prototype methods.
- * @author NKPGAMER
- */
-
 Object.defineProperties(Map.prototype, {
   merge: {
     value: function (map, replaceExisting) {

@@ -1,10 +1,9 @@
-import { Player } from '@minecraft/server';
+import { system, Player } from '@minecraft/server';
 import * as MinecraftUI from '@minecraft/server-ui';
 
 class ActionFormData {
   #buttons;
   #form;
-  #hande;
   constructor(jsonData) {
     this.#buttons = [];
     this.#form = new MinecraftUI.ActionFormData();
@@ -31,6 +30,15 @@ class ActionFormData {
     }
   }
 
+  back(callback) {
+    this.#buttons.unshift({
+      label: Aegis.Trans('aegis.ui.back_label'),
+      icon: 'textures/ui/icon_import',
+      callback: typeof callback == 'function' ? callback : Function.Empty,
+      show: true
+    })
+  }
+
   button(label, icon, callback, show) {
     this.#buttons.push({
       label: typeof label == 'string' ? label : "",
@@ -42,44 +50,153 @@ class ActionFormData {
   }
 
   title(value) {
-    this.#form.title = typeof value == 'string' ? value : void 0;
+    this.#form.title((typeof value == 'string' || (typeof value == 'object' && !Array.isArray(value))) ? value : void 0);
     return this;
   }
 
   body(value) {
-    this.#form.body = typeof value == 'string' ? value : void 0;
+    this.#form.body((typeof value == 'string' || (typeof value == 'object' && !Array.isArray(value))) ? value : void 0);
     return this;
   }
 
-  show(player, options) {
-    if (!(player instanceof Player)) throw new Error("");
-    for (const button of this.#buttons) {
-      if (button.show) {
-        this.#form.button(button.label, button.icon);
+  show(player) {
+    try {
+      this.#form.show(player).then(res => {
+        if (res.canceled) return;
+        this.#buttons[res.selection].callback(player);
+      });
+    } catch (error) {
+      error.class = this.constructor.name;
+      error.function = this.show.name;
+      console.error(error?.toString() ?? error);
+    }
+  }
+
+  async waitShow(player, waitTime = Infinity, messageTimeout) {
+    const endTime = system.currentTick + waitTime;
+    while (system.currentTick <= endTime) {
+      try {
+        const response = await this.#form.show(player);
+        if (response.cancelationReason != 'UserBusy') {
+          return response;
+        };
+      } catch (error) {
+        error.class = this.constructor.name;
+        error.function = this.waitShow.name;
+        console.error(error?.toString() ?? error);
       }
+      await system.waitTicks(20);
     }
 
-    if (options.wait) {
-      this.#form.waitShow(player).then(this.#hande);
-    } else {
-      this.#form.show(player).then(this.#hande);
-    }
-
-    return this;
-  }
-
-  #hande(result) {
-    if (result.canceled) return;
-    this.#buttons[result.selection]?.callback(player);
+    const timeout = new Error(messageTimeout ?? "Wait time exceeded");
+    timeout.class = this.constructor.name;
+    timeout.function = this.waitShow.name;
+    throw timeout;
   }
 }
 
 class ModalFormData extends MinecraftUI.ModalFormData {
+  #bodyText;
   constructor(jsonData) {
-    super()
+    super();
+    this.#bodyText;
+
+    if (jsonData) {
+      this.parseJSON(jsonData);
+    }
   }
 
-  title(value) {
-    super.title = typeof value == 'string' ? value : void 0
+  body(value) {
+    this.#bodyText = typeof value == 'string' ? value : void 0;
+    return this;
+  }
+
+  parseJSON(json) {
+    try {
+      const data = JSON.parse(json);
+      if ((typeof data.title == 'string' || (typeof data.title == 'object' && !Array.isArray(data.title)))) {
+        this.title(data.title);
+      }
+      if ((typeof data.body == 'string' || (typeof data.body == 'object' && !Array.isArray(data.body)))) {
+        this.#bodyText = data.body;
+      }
+    } catch (error) {
+      error.class = this.constructor.name;
+      error.function = this.parseJSON.name;
+      console.error(error.toString());
+    }
+  }
+
+  async waitShow(player, waitTime = Infinity, messageTimeout) {
+    if (!(player instanceof Player)) throw new Error("");
+    const endTime = system.currentTick + waitTime;
+
+    while (system.currentTick <= endTime) {
+      try {
+        const response = await this.show(player);
+        if (response.cancelationReason != 'UserBusy') {
+          return response;
+        };
+      } catch (error) {
+        error.class = this.constructor.name;
+        error.function = this.waitShow.name;
+        console.error(error?.toString() ?? error);
+      }
+      await system.waitTicks(20);
+    }
+
+    const timeout = new Error(messageTimeout ?? "Wait time exceeded");
+    timeout.class = this.constructor.name;
+    timeout.function = this.waitShow.name;
+    throw timeout;
   }
 }
+
+class MessageFormData extends MinecraftUI.MessageFormData {
+  constructor(jsonData) {
+    super();
+
+    if (jsonData) {
+      this.parseJSON(jsonData);
+    }
+  }
+
+  async waitShow(player, waitTime = Infinity, messageTimeout) {
+    if (!(player instanceof Player)) throw new Error("");
+    const endTime = system.currentTick + waitTime;
+
+    while (system.currentTick <= endTime) {
+      try {
+        const response = await this.show(player);
+        if (response.cancelationReason != 'UserBusy') {
+          return response;
+        };
+      } catch (error) {
+        error.class = this.constructor.name;
+        error.function = this.waitShow.name;
+        console.error(error?.toString() ?? error);
+      }
+      await system.waitTicks(20);
+    }
+
+    const timeout = new Error(messageTimeout ?? "Wait time exceeded");
+    timeout.class = this.constructor.name;
+    timeout.function = this.waitShow.name;
+    throw timeout;
+  }
+
+  parseJSON(json) {
+    try {
+      const data = JSON.parse(json);
+      if (typeof data.title == 'string' || (typeof data.title && !Array.isArray(data.title))) {
+        this.title(data.title);
+      }
+    } catch (error) {
+      error.class = this.constructor.name;
+      error.function = this.parseJSON.name;
+      console.error(error?.toString());
+    }
+  }
+}
+
+export { ActionFormData, ModalFormData, MessageFormData }
