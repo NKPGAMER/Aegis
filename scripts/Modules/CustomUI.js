@@ -73,3 +73,13 @@ class ActionFormData {
     this.#buttons[result.selection]?.callback(player);
   }
 }
+
+class ModalFormData extends MinecraftUI.ModalFormData {
+  constructor(jsonData) {
+    super()
+  }
+
+  title(value) {
+    super.title = typeof value == 'string' ? value : void 0
+  }
+}
