@@ -65,5 +65,6 @@ function EventUnsubscribe(EventType, EventId, callback) {
 (async () => {
   await import('./Modules/javascript-extensions');
   await import('./Modules/minecraft-extensions');
+  await import('./Modules/loadConfig');
   import('./index')
 })()

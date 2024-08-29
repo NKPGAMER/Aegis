@@ -23,18 +23,6 @@
       "version": [ 1, 0, 0 ]
     }
   ],
-  "subpacks": [
-    {
-      "name": "default",
-      "folder_name": "default",
-      "memory_tier": 1
-    },
-    {
-      "name": "Clear World",
-      "folder_name": "clear",
-      "memory_tier": 1
-    }
-  ],
   "settings": [
     {
       "type": "label",
