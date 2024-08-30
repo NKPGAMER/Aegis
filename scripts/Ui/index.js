@@ -31,8 +31,21 @@ const profile = new ActionFormData()
 const ChangeGameMode = new ActionFormData()
   .back((player) => isAdmin(player) ? Tool : main.moderator(player))
   .button(Aegis.Trans('aegis.gamemode.adventure'), undefined, (player) => player.setGameMode(GameMode.adventure))
-  .button(Aegis.Trans('aegis.gamemode.surival'), undefined, (player) => player.setGameMode(GameMode.survival))
+  .button(Aegis.Trans('aegis.gamemode.survival'), undefined, (player) => player.setGameMode(GameMode.survival))
   .button(Aegis.Trans('aegis.gamemode.creative'), undefined, (player) => player.setGameMode(GameMode.creative))
   .button(Aegis.Trans('aegis.gamemode.spectator'), undefined, (player) => player.setGameMode(GameMode.spectator));
 
-const Ch
+const ChangWeather = (player) => new ModalFormData()
+  .title(Aegis.Trans('aegis.ui.change_weather'))
+  .dropdown(Aegis.Trans('aegis.ui.change_weather.select'), Object.keys(WeatherType).map(w => Aegis.Trans('aegis.weather.') + w))
+  .textField(Aegis.Trans('aegis.ui.change_weather.duration'), 'ticks')
+  .show(player)
+  .then(res => {
+    if(res.canceled) return;
+
+    const weather = WeatherType[Object.keys(WeatherType)[res.formValues[0]]]
+    const duration = Number(res.formValues[1]) || Math.randomInt(1200, 36000);
+
+    world.getDimension('overworld').setWeather(weather, duration);
+    player.tell('')
+  })
