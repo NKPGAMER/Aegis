@@ -122,11 +122,19 @@ const FloatingText = {
   add: new ModalFormData(),
 
   edit: function(player, target) {
-
     const { nameTag = 'Anonymous', location = {} } = target;
     new ModalFormData()
     .title(Aegis.Trans('aegis.ui.floating_text.edit'))
     .textField(Aegis.Trans('aegis.ui.floating_text.edit.name'), `${nameTag}`, `${nameTag}`)
     .textField(Aegis.Trans('aegis.ui.floating_text.edit.location'), `${location.x} ${location.y} ${location.z}`)
+    .submitButton(Aegis.Trans('aegis.ui.floating_text.submit'))
+    .show(player).then(res => {
+      if(res.canceled) return;
+
+      const name = res.formValues[0];
+      const location = res.formValues[1].split(' ', 3).map(pos => Number(pos));
+
+      if(!location.some(l => !l)) return player.sendMessage()
+    })
   }
 };
