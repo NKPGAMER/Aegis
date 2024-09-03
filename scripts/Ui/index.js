@@ -2,12 +2,20 @@ import { world, system, Player, GameMode, WeatherType } from "@minecraft/server"
 import { ActionFormData, ModalFormData, MessageFormData } from "../Modules/CustomUI";
 import { ChangeGameMode as setGameMode, isAdmin, isModerator, setActionBar, getAllItemStack, ItemStackToJSON, JsonToItemStack } from '../Assets/Utils';
 
+const Aegis = {
+
+};
+
 world.beforeEvents.itemUse.subscribe((event) => {
   if (event.itemStack.typeId === 'aegis:menu' && event.source instanceof Player) {
     event.cancel = true;
     openUI(event.source);
   }
 });
+
+const profile = new ActionFormData()
+  .back(openUI)
+  .button(Aegis.Trans('aegis.ui.infraction_history'));
 
 const main = {
   member: new ActionFormData()
@@ -34,13 +42,10 @@ function openUI(player) {
   });
 }
 
-const profile = new ActionFormData()
-  .back(openUI)
-  .button(Aegis.Trans('aegis.ui.infraction_history'));
 
 const ChangeGameMode = new ActionFormData()
   .title(Aegis.Trans('aegis.ui.change_gamemode'))
-  .back((player) => isAdmin(player) ? Tool : main.moderator(player))
+  .back((player) => isAdmin(player) ? Tools : main.moderator(player))
   .button(Aegis.Trans('aegis.gamemode.adventure'), undefined, (player) => setGameMode(player, GameMode.adventure))
   .button(Aegis.Trans('aegis.gamemode.survival'), undefined, (player) => setGameMode(player, GameMode.survival))
   .button(Aegis.Trans('aegis.gamemode.creative'), undefined, (player) => setGameMode(player, GameMode.creative))
@@ -62,7 +67,7 @@ function ChangeWeather(player) {
       player.tell(Aegis.Trans('aegis.ui.change_weather.complete')?.replace('<weather>', Aegis.Trans('aegis.weather.' + weather)));
     })
     .catch((error) => {
-      error.function = ChangWeather.name;
+      error.function = ChangeWeather.name;
       console.error(error?.toString() || error);
     });
 }
@@ -87,3 +92,41 @@ const worldTool = new ActionFormData()
   .button(Aegis.Trans('aegis.ui.change_gamemode'), null, ChangeGameMode.show)
   .button(Aegis.Trans('aegis.ui.change_weather'), null, ChangeWeather)
   .button(Aegis.Trans('aegis.ui.change_time'), null, ChangeTime);
+
+const Tools = new ActionFormData()
+  .title(Aegis.Trans('aegis.ui.tools'))
+  .button(Aegis.Trans('aegis.ui.floating_text'));
+
+const FloatingText = {
+  options: {
+    type: 'minecraft:egg',
+    families: ['aegis', 'floating_text']
+  },
+
+  main: new ActionFormData()
+    .title(Aegis.Trans('aegis.ui.floating_text'))
+    .back(Tools)
+    .button(Aegis.Trans('aegis.ui.floating_text.add'), null, this.add.show)
+    .button(Aegis.Trans('aegis.ui.floating_text.list'), null, this.list),
+
+  list: function (player) {
+    const form = new ActionFormData()
+      .title(Aegis.Trans('aegis.ui.floating_text.list'))
+      .back(FloatingText.main);
+
+    player.dimension.getEntities(FloatingText.options).forEach((entity) => {
+      form.button(`${entity.nameTag || 'Anonymous'}\n${Math.floor(entity.location.x)} ${Math.floor(entity.location.y)} ${Math.floor(entity.location.z)}`, null, () => FloatingText.edit(player, entity));
+    });
+  },
+
+  add: new ModalFormData(),
+
+  edit: function(player, target) {
+
+    const { nameTag = 'Anonymous', location = {} } = target;
+    new ModalFormData()
+    .title(Aegis.Trans('aegis.ui.floating_text.edit'))
+    .textField(Aegis.Trans('aegis.ui.floating_text.edit.name'), `${nameTag}`, `${nameTag}`)
+    .textField(Aegis.Trans('aegis.ui.floating_text.edit.location'), `${location.x} ${location.y} ${location.z}`)
+  }
+};

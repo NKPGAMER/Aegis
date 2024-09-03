@@ -37,6 +37,7 @@ class ActionFormData {
       callback: typeof callback == 'function' ? callback : Function.Empty,
       show: true
     })
+    return this;
   }
 
   button(label, icon, callback, show) {
