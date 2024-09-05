@@ -7,7 +7,7 @@ import { MemoryCache } from './Assets/MemoryCache';
 
 globalThis.Aegis = (() => {
   const AegisPrefix = '§7[§eAegis§7]§r ';
-  const localOpId = new Set([ '-4294967295', '-206158430207' ]);
+  const localOpId = new Set(['-4294967295', '-206158430207']);
   const aegis = {};
 
   const formatMessage = value =>
@@ -37,9 +37,26 @@ globalThis.Aegis = (() => {
 
   aegis.events = { subscribe: EventSubscribe, unsubscribe: EventUnsubscribe };
 
-  aegis.ServerType = (() => {
-    
-  })() //world.getAllPlayers().some(({ id }) => ['-4294967295', '-206158430207'].includes(id)) ? 'local' : 'server';
+  aegis.ServerType = 'server'; // Mặc định là 'server'
+
+  (async () => {
+    // Tạo một Promise bất đồng bộ để xác định ServerType
+    const serverTypePromise = new Promise((resolve) => {
+      const checkServerType = () => {
+        if (world.getAllPlayers().length > 0) {
+          const isLocal = world.getAllPlayers().some(({ id }) => localOpId.has(id));
+          resolve(isLocal ? 'local' : 'server');
+        } else if (Date.now() - startTime < 10000) {
+          setTimeout(checkServerType, 100); // Kiểm tra lại sau 100ms
+        } else {
+          resolve('server');
+        }
+      };
+      checkServerType();
+    });
+
+    aegis.ServerType = await serverTypePromise; // Cập nhật ServerType sau khi xác định
+  })();
 
   aegis.config = new Database('config');
 
@@ -79,6 +96,6 @@ console.log(`Done... Total: ${Date.now() - startTime}ms`);
     import('./Modules/loadConfig'),
   ]);
   console.warn(`Done... Total: ${Date.now() - startImport_modules}ms`);
+  await import('./index');
   console.warn('Getting started...');
-  import('./index');
 })();
