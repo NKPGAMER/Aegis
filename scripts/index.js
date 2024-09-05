@@ -4,14 +4,19 @@ const plugins = [
 
 const startTime = Date.now();
 
-Promise.allSettled(plugins.map(plugin => import(plugin))).then(results => {
+const loadPlugins = async () => {
+  const results = await Promise.allSettled(plugins.map(plugin => import(plugin)));
+  
   results.forEach((result, index) => {
+    const pluginName = plugins[index];
     if (result.status === 'fulfilled') {
-      console.warn(`Plugin ${plugins[index]} loaded successfully.`);
+      console.warn(`Plugin ${pluginName} loaded successfully.`);
     } else {
-      console.error(`Failed to load plugin ${plugins[index]}: ${result?.reason?.toString() ?? result?.reason}`);
+      console.error(`Failed to load plugin ${pluginName}: ${result.reason?.message ?? result.reason}`);
     }
   });
-});
+  
+  console.warn(`Modules are ready. Total: ${(Date.now() - startTime).toFixed(2)}ms`);
+};
 
-console.warn(`Done! [Processing time]: ${Date.now() - startTime}`);
+loadPlugins();

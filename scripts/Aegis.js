@@ -1,14 +1,20 @@
-const startTime = Date.now();
-console.warn('Preparing...');
-
-import { world, Player } from '@minecraft/server';
+import { world, system, Player } from '@minecraft/server';
 import { Database } from './Assets/Database';
 import { MemoryCache } from './Assets/MemoryCache';
+
+const startTick = system.currentTick;
+console.warn('Preparing...');
 
 globalThis.Aegis = (() => {
   const AegisPrefix = '§7[§eAegis§7]§r ';
   const localOpId = new Set(['-4294967295', '-206158430207']);
-  const aegis = {};
+  const aegis = {
+    defaultDimension: world.getDimension('overworld'),
+    config: new Database('config'),
+    Database,
+    MemoryCache,
+    ServerType: 'server'
+  };
 
   const formatMessage = value =>
     typeof value === 'string'
@@ -17,7 +23,6 @@ globalThis.Aegis = (() => {
 
   aegis.sendMessage = (value, target) => {
     const msg = formatMessage(value);
-
     if (!target) {
       world.sendMessage(msg);
     } else if (target instanceof Player) {
@@ -29,40 +34,25 @@ globalThis.Aegis = (() => {
     }
   };
 
-  aegis.defaultDimension = world.getDimension('overworld');
-
   aegis.runCommand = command => aegis.defaultDimension.runCommand(command);
-
   aegis.runCommandAsync = command => aegis.defaultDimension.runCommandAsync(command);
-
   aegis.events = { subscribe: EventSubscribe, unsubscribe: EventUnsubscribe };
 
-  aegis.ServerType = 'server'; // Mặc định là 'server'
-
   (async () => {
-    // Tạo một Promise bất đồng bộ để xác định ServerType
-    const serverTypePromise = new Promise((resolve) => {
+    aegis.ServerType = await new Promise((resolve) => {
       const checkServerType = () => {
-        if (world.getAllPlayers().length > 0) {
-          const isLocal = world.getAllPlayers().some(({ id }) => localOpId.has(id));
-          resolve(isLocal ? 'local' : 'server');
-        } else if (Date.now() - startTime < 10000) {
-          setTimeout(checkServerType, 100); // Kiểm tra lại sau 100ms
+        const players = world.getAllPlayers();
+        if (players.length > 0) {
+          resolve(players.some(({ id }) => localOpId.has(id)) ? 'local' : 'server');
+        } else if (system.currentTick - startTick < 200) {
+          system.runTimeout(checkServerType, 20);
         } else {
           resolve('server');
         }
       };
       checkServerType();
     });
-
-    aegis.ServerType = await serverTypePromise; // Cập nhật ServerType sau khi xác định
   })();
-
-  aegis.config = new Database('config');
-
-  aegis.Database = Database;
-
-  aegis.MemoryCache = MemoryCache;
 
   return aegis;
 })();
@@ -85,17 +75,17 @@ function EventUnsubscribe(EventType, EventId, callback) {
   event(callback);
 }
 
-console.log(`Done... Total: ${Date.now() - startTime}ms`);
+console.log(`Done... Total: ${system.currentTick - startTick} ticks`);
 
 (async () => {
-  const startImport_modules = Date.now();
+  const startImport_modules = system.currentTick;
   console.warn('Import Modules...');
   await Promise.all([
     import('./Modules/javascript-extensions'),
     import('./Modules/minecraft-extensions'),
     import('./Modules/loadConfig'),
   ]);
-  console.warn(`Done... Total: ${Date.now() - startImport_modules}ms`);
+  console.warn(`Done... Total: ${system.currentTick - startImport_modules} ticks`);
   await import('./index');
   console.warn('Getting started...');
 })();
