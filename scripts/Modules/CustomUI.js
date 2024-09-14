@@ -4,8 +4,10 @@ import * as MinecraftUI from '@minecraft/server-ui';
 class ActionFormData {
   #buttons;
   #form;
+  #functions;
   constructor(jsonData) {
     this.#buttons = [];
+    this.#functions = [];
     this.#form = new MinecraftUI.ActionFormData();
 
     if (jsonData) {
@@ -40,13 +42,16 @@ class ActionFormData {
     return this;
   }
 
-  button(label, icon, callback, show) {
-    this.#buttons.push({
-      label: typeof label == 'string' ? label : "",
-      icon: typeof icon == 'string' ? icon : void 0,
-      callback: typeof callback == 'function' ? callback : Function.Empty,
-      show: typeof show == 'boolean' ? show : true
-    });
+  button(label, icon, callback, show = true) {
+    if(!show) return;
+    this.#form.button(label, icon);
+    this.#functions.push(callback);
+    // this.#buttons.push({
+      // label: typeof label == 'string' ? label : "",
+      // icon: typeof icon == 'string' ? icon : void 0,
+      // callback: typeof callback == 'function' ? callback : Function.Empty,
+      // show: typeof show == 'boolean' ? show : true
+    // });
     return this;
   }
 
@@ -64,7 +69,7 @@ class ActionFormData {
     try {
       this.#form.show(player).then(res => {
         if (res.canceled) return;
-        this.#buttons[res.selection].callback(player);
+        this.#functions?.[res.selection](player);
       });
     } catch (error) {
       error.class = this.constructor.name;

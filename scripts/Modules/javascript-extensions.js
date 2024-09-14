@@ -34,22 +34,6 @@ Object.defineProperties(console, {
   warn: { value: createLogMethod("warn", warn) },
   error: { value: createLogMethod("error", error) },
   info: { value: createLogMethod("info", info) },
-
-  classError: {
-    value(className, functionName, error) {
-      const stack = `[${className}::${functionName}]`;
-      let errorMessage = 'undefined';
-
-      if (error instanceof Error) {
-        errorMessage = `${error.message.replace(info, '').trim()} ${error.stack.trim()}`;
-      } else if (typeof error === 'string') {
-        errorMessage = error;
-      }
-
-      console.error(`${stack} ${errorMessage}`);
-    }
-  },
-
   getLogs: { value: () => Logs }
 });
 
@@ -214,14 +198,8 @@ Object.defineProperties(Math, {
     value: (data) => {
       if (typeof data === 'number') return floor(data);
       if (typeof data === 'object') return Object.fromEntries(Object.entries(data).map(([k, v]) => [k, floor(v)]));
-      console.classError("Math", "floor", "data must be a number or object<number>");
+      throw new Error("Parameters must be a number or object<number>");
     }
-  },
-  tickToSecond: {
-    value: (tick) => tick * 0.05
-  },
-  secondToTick: {
-    value: (seconds) => seconds * 20
   },
   distance: {
     value: (v1, v2, includeY = true) => {

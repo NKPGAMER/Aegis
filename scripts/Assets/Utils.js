@@ -1,57 +1,129 @@
-import { world, system, ItemStack } from '@minecraft/server';
-const PlayersData = new WeakMap();
+import { world, system, ItemStack, Player } from '@minecraft/server';
 
-const ChangeGameMode = async function (player, mode) {
-  player['Q2hhbmdlckdhbWVNb2Rl'] = true;
+const PlayersData = new WeakMap();
+const BanData = new Aegis.Database('data-ban');
+
+async function ChangeGameMode(player, mode) {
+  player['isChangeGameMode'] = true;
   const { successCount } = await player.runCommandAsync(`gamemode ${mode}`);
-  player['Q2hhbmdlckdhbWVNb2Rl'] = false;
-  
+  player['isChangeGameMode'] = false;
+
   if (successCount == 0) {
-    console.error(`Changing the game mode of ${player.name} failed!`)
+    console.error(`Changing the game mode of ${player.name} failed!`);
   }
 }
 
 const isAdmin = (player) => !!player.getDynamicProperty('isAdmin');
 
-const isModerator = (player) => !!this?.getDynamicProperty('isModerator');
+const isModerator = (player) => !!player?.getDynamicProperty('isModerator');
 
-const setActionBar = function (player, msg, options) {
-  const { id = null, prioritize = false } = options || {};
+const setActionBar = (player, msg, options = {}) => {
+  if (typeof msg !== "string") return;
+
+  const { id = null, prioritize = false } = options;
   const currentTime = Date.now();
-  if(typeof msg != "string") return;
-  const data = (player['YWN0aW9uQmFy'] || []).filter(t => t.expiryTime >= currentTime);
-  const expiryTime = currentTime + 1000; /* Message will expire after 1s */
-  const newItem = { text, prioritize, id, expiryTime };
-  
-  if(id) {
+  const expiryTime = currentTime + 1000; // Message will expire after 1s
+
+  const data = (PlayersData.get(player) || []).filter(t => t.expiryTime >= currentTime);
+  const newItem = { text: msg, prioritize, id, expiryTime };
+
+  if (id) {
     const existingIndex = data.findIndex(t => t.id === id);
-    if (existingIndex !== -1) {
-      data[existingIndex] = newItem;
-    } else {
-      data.push(newItem);
-    }
+    existingIndex !== -1 ? data[existingIndex] = newItem : data.push(newItem);
   } else {
-    newItem['id'] = data.length + 1;
+    newItem.id = data.length + 1;
     data.push(newItem);
   }
-  
+
   const actionBarText = data
-    .sort((a, b) => (b.prioritize - a.prioritize) || (a.id - b.id))
+    .sort((a, b) => b.prioritize - a.prioritize || a.id - b.id)
     .map(i => i.text)
     .join("§r\n");
 
   player.onScreenDisplay.setActionBar(actionBarText);
-  player['YWN0aW9uQmFy'] = data;
+  PlayersData.set(player, data);
+};
+
+async function kick(player, reason) {
+  if (!(player instanceof Player)) throw new TypeError();
+
+  const name = player.name;
+
+  const { successCount } = await Aegis.defaultDimension.runCommandAsync(`kick ${JSON.stringify(name)} ${reason || ""}`);
+
+  if (successCount == 0) {
+    player.triggerEvent('aegis:disconnect');
+
+    await system.waitTicks(20);
+
+    if (world.getPlayers({ name: name }).length == 0) return;
+    throw new Error(`Tried to kick player "${name} but failed!"`);
+  }
 }
 
-const flag = (player, module, type, detail, maxVl, punishment) => {
-  
+function ban(player, time, reason) {
+  if (typeof time != 'number' || !(player instanceof Player)) throw new TypeError();
+  const currentTime = Date.now();
+  const playerData = BanData.get(player.id) || { status: {}, history: [] };
+
+  playerData.history.push({ type: 'ban', atTime: currentTime, time: time });
+  playerData.status = { until: time, reason: reason };
+
+  kick(player, reason);
 }
+
+function unban(id, clearData = false) {
+  const data = BanData.get(id) || { status: {}, history: [] };
+  if(!data) return;
+
+  delete data.status;
+  if(clearData) {
+    
+  }
+}
+
+const flag_config = Aegis.config.get('flag');
+const flag_data = new Aegis.Database('data-flag');
+const SEPERATOR = "§r§l§e--------------------";
+const flag = (player, module, type, detail, maxVl = 5, punishment = 'kick') => {
+  const currentTime = Date.now();
+  if (flag_config.mode != 'silent') {
+    let message = SEPERATOR
+      + `\n§r§e${Aegis.Trans('flag.player').replace('<player>', player.name)}`
+      + `\n§r§e${Aegis.Trans('flag.source').replace('<module>', module).replace('<type>', type)}`
+      + `\n§r§e${Aegis.Trans('flag.detailed').replace('<detail>', detail)}`
+      + `\n§r§e${Aegis.Trans('flag.time').replace('<time>', currentTime.toLocaleString(Aegis.config.get('region').area || 'en-US'))}`;
+    + `\n${SEPERATOR}`;
+
+    if (flag_config.mode == 'admin') {
+      world.getAllPlayers().filter(isAdmin).forEach(player => player.sendMessage(message));
+    } else {
+      world.getAllPlayers().filter(player => isAdmin(player) || isModerator(player)).forEach(player => player.sendMessage(message));
+    }
+
+    const flags = flag_data.get(player.id) ?? [];
+    flags.push({
+      date: currentTime,
+      name: player.name,
+      id: player.id,
+      module: module,
+      type: type,
+      detailed: detail
+    });
+    flag_data.set(player.id, flags);
+
+    if (flags.filter(i => i.module == module).length >= maxVl) {
+      if (punishment == 'kick') {
+        kick(player);
+      }
+    }
+  }
+};
 
 function getAllItemStack(player) {
   return new Promise((resolve) => {
     const container = player.getComponent("inventory").container;
-    
+
     const itemList = Array.from({ length: container.size })
       .map((_, i) => ({ itemStack: container.getItem(i), slot: i }))
       .filter(item => item.itemStack != null);
@@ -87,11 +159,11 @@ function JsonToItemStack(value) {
 
     itemStack.nameTag = data.name;
     itemStack.setLore(data.lores);
-    
+
     if (itemStack.hasComponent('minecraft:enchantable')) {
       itemStack.getComponent('minecraft:enchantable').addEnchantments(data.enchantments);
     }
-    
+
     return itemStack;
   } catch (error) {
     console.error(`Error converting JSON to ItemStack: ${error.message}`);
@@ -104,7 +176,9 @@ export {
   isAdmin,
   isModerator,
   setActionBar,
+  flag,
+  kick,
   getAllItemStack,
   ItemStackToJSON,
   JsonToItemStack
-}
+};

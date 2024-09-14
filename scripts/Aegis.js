@@ -1,6 +1,7 @@
 import { world, system, Player } from '@minecraft/server';
 import { Database } from './Assets/Database';
 import { MemoryCache } from './Assets/MemoryCache';
+import languages from './Data/Languages/languages';
 
 const startTick = system.currentTick;
 console.warn('Preparing...');
@@ -11,6 +12,7 @@ globalThis.Aegis = (() => {
   const aegis = {
     defaultDimension: world.getDimension('overworld'),
     config: new Database('config'),
+    Trans: Translation,
     Database,
     MemoryCache,
     ServerType: 'server'
@@ -37,7 +39,7 @@ globalThis.Aegis = (() => {
   aegis.runCommand = command => aegis.defaultDimension.runCommand(command);
   aegis.runCommandAsync = command => aegis.defaultDimension.runCommandAsync(command);
   aegis.events = { subscribe: EventSubscribe, unsubscribe: EventUnsubscribe };
-
+  
   (async () => {
     aegis.ServerType = await new Promise((resolve) => {
       const checkServerType = () => {
@@ -75,9 +77,22 @@ function EventUnsubscribe(EventType, EventId, callback) {
   event(callback);
 }
 
-console.log(`Done... Total: ${system.currentTick - startTick} ticks`);
+function execute(target, [...commands], ) {
+  
+}
+
+const language_key = Aegis.config.get('language-key') || 'vi-VN';
+const language = languages[language_key] || languages['vi-VN'];
+
+function Translation(token) {
+  if (typeof token != 'string') throw new TypeError();
+  return language[token] || token;
+}
+
+console.warn(`Done... Total: ${(system.currentTick - startTick).toFixed(2)} ticks`);
 
 (async () => {
+  try {
   const startImport_modules = system.currentTick;
   console.warn('Import Modules...');
   await Promise.all([
@@ -85,7 +100,9 @@ console.log(`Done... Total: ${system.currentTick - startTick} ticks`);
     import('./Modules/minecraft-extensions'),
     import('./Modules/loadConfig'),
   ]);
-  console.warn(`Done... Total: ${system.currentTick - startImport_modules} ticks`);
-  await import('./index');
-  console.warn('Getting started...');
+  console.warn(`Done... Total: ${(system.currentTick - startImport_modules).toFixed(2)} ticks`);
+  import('./index');
+  } catch(error) {
+    console.error(error.message, error.stack)
+  }
 })();

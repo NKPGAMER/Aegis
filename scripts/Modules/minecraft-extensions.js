@@ -77,6 +77,6 @@ if (!Player.prototype.hasGameMode) {
 
 if (!Player.prototype.isRiding) {
   Player.prototype.isRiding = function () {
-    return this.hasTag("@control.riding") || this.hasComponent("minecraft:riding");
+    return this.hasTag("aegis:riding") || this.hasComponent("minecraft:riding");
   };
 }
