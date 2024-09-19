@@ -24,6 +24,21 @@ if (!Array.prototype.delete) {
 const Logs = [];
 const { log, warn, error, info } = console;
 
+const timeLabels = {}
+if(!console.time) {
+  console.time = (label) => timeLabels[label] = Date.now();
+}
+
+if(!console.timeEnd) {
+  console.timeEnd = (label) => {
+    if(typeof timeLabels[label] == 'number') {
+      const duration = Date.now() - timeLabels[label];
+      console.warn(`${label}: ${duration.toFixed(2)}ms`);
+      delete timeLabels[label] 
+    } else throw new TypeError();
+  }
+}
+
 const createLogMethod = (type, originalMethod) => (...msg) => {
   Logs.push({ type, message: msg.join("\n") });
   originalMethod.apply(console, msg);

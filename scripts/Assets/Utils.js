@@ -57,7 +57,7 @@ async function kick(player, reason) {
     await system.waitTicks(20);
 
     if (world.getPlayers({ name: name }).length == 0) return;
-    throw new Error(`Tried to kick player "${name} but failed!"`);
+    throw new Error(`Tried to kick player "${name}" but failed!"`);
   }
 }
 
@@ -66,20 +66,23 @@ function ban(player, time, reason) {
   const currentTime = Date.now();
   const playerData = BanData.get(player.id) || { status: {}, history: [] };
 
-  playerData.history.push({ type: 'ban', atTime: currentTime, time: time });
-  playerData.status = { until: time, reason: reason };
+  playerData.history.push({ type: 'ban', atTime: currentTime, time: time, reason: reason });
+  playerData.status = { type: 'ban', until: time, reason: reason };
+  playerData.info = { name: player.name, id: player.id }
 
   kick(player, reason);
 }
 
 function unban(id, clearData = false) {
   const data = BanData.get(id) || { status: {}, history: [] };
-  if(!data) return;
+  if (!data) return;
 
-  delete data.status;
-  if(clearData) {
-    
+  data.status = {};
+  if (clearData) {
+    data.history = [];
   }
+
+  BanData.set(id, data);
 }
 
 const flag_config = Aegis.config.get('flag');
@@ -171,14 +174,4 @@ function JsonToItemStack(value) {
   }
 }
 
-export {
-  ChangeGameMode,
-  isAdmin,
-  isModerator,
-  setActionBar,
-  flag,
-  kick,
-  getAllItemStack,
-  ItemStackToJSON,
-  JsonToItemStack
-};
+export { ChangeGameMode, isAdmin, isModerator, setActionBar, flag, kick, ban, unban, getAllItemStack, ItemStackToJSON, JsonToItemStack };

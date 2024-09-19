@@ -10,10 +10,18 @@
   },
   "customCommand": {
     "enable": true,
-    "prefix": ".a",
-    "c": [
-      "a",
-      "b"
-    ]
+    "prefix": "."
+  },
+  "chat-manager": {
+    "enable": true,
+    "chatRank": {
+      "enable": true,
+      "join": "§r§7] [§r",
+      "start": "§7[",
+      "end": "§r§7]"
+    },
+    "max-length": 350,
+    "max-consecutive-message": 3,
+    "message-cooldown": 3000
   }
 }

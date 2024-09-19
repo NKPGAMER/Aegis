@@ -100,4 +100,4 @@ subscribe({
     player.sendMessage(`§aHello, ${name}!`);
 });
 
-export default { prefix, commands, subscribe };
+export { prefix, commands, subscribe };

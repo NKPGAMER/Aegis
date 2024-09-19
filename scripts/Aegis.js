@@ -1,4 +1,4 @@
-import { world, system, Player } from '@minecraft/server';
+import { world, system, Player, Dimension, Entity } from '@minecraft/server';
 import { Database } from './Assets/Database';
 import { MemoryCache } from './Assets/MemoryCache';
 import languages from './Data/Languages/languages';
@@ -13,6 +13,7 @@ globalThis.Aegis = (() => {
     defaultDimension: world.getDimension('overworld'),
     config: new Database('config'),
     Trans: Translation,
+    execute,
     Database,
     MemoryCache,
     ServerType: 'server'
@@ -39,7 +40,7 @@ globalThis.Aegis = (() => {
   aegis.runCommand = command => aegis.defaultDimension.runCommand(command);
   aegis.runCommandAsync = command => aegis.defaultDimension.runCommandAsync(command);
   aegis.events = { subscribe: EventSubscribe, unsubscribe: EventUnsubscribe };
-  
+
   (async () => {
     aegis.ServerType = await new Promise((resolve) => {
       const checkServerType = () => {
@@ -77,8 +78,32 @@ function EventUnsubscribe(EventType, EventId, callback) {
   event(callback);
 }
 
-function execute(target, [...commands], ) {
-  
+function execute([...commands], target = Aegis.defaultDimension) {
+  try {
+    if (typeof target == 'string' || !(target instanceof Dimension || target instanceof Entity)) {
+      target = typeof target == 'string' ? world.getDimension(target) || Aegis.defaultDimension : Aegis.defaultDimension;
+    }
+
+    return commands.map(async command => {
+      if (typeof command == 'string') {
+        return (await target.runCommandAsync(command)).successCount;
+      } else if (typeof command == 'object' && !Array.isArray(command)) {
+        const { successCount } = await target.runCommandAsync(command.run);
+
+        if(successCount > 0) {
+          if(typeof command.success === 'function') {
+            command.success();
+          } else {
+            execute(command, target);
+          }
+        }
+        return successCount;
+      }
+    });
+  } catch (error) {
+
+  }
+
 }
 
 const language_key = Aegis.config.get('language-key') || 'vi-VN';
@@ -92,7 +117,6 @@ function Translation(token) {
 console.warn(`Done... Total: ${(system.currentTick - startTick).toFixed(2)} ticks`);
 
 (async () => {
-  try {
   const startImport_modules = system.currentTick;
   console.warn('Import Modules...');
   await Promise.all([
@@ -101,8 +125,6 @@ console.warn(`Done... Total: ${(system.currentTick - startTick).toFixed(2)} tick
     import('./Modules/loadConfig'),
   ]);
   console.warn(`Done... Total: ${(system.currentTick - startImport_modules).toFixed(2)} ticks`);
-  import('./index');
-  } catch(error) {
-    console.error(error.message, error.stack)
-  }
+  await import('./index');
+  console.warn('Getting started...');
 })();
