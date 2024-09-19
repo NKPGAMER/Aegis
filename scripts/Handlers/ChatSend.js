@@ -7,11 +7,8 @@ const config = Aegis.config.get('chat-manager');
 const TransKey = 'handler.chat.';
 world.beforeEvents.chatSend.subscribe(event => {
   const { sender: player, message } = event;
+  event.cancel = true;
 
-  if (message.length > config['max-length']) {
-    Aegis.sendMessage(Aegis.Trans(TransKey + 'maxLength'));
-    return;
-  }
   if (message.startsWith(prefix)) {
     const args = parseArgs(message.slice(prefix.length));
     const commandName = args?.shift()?.toLowerCase() || "";
@@ -29,6 +26,13 @@ world.beforeEvents.chatSend.subscribe(event => {
     return;
   }
 
+  if (message.length > config['max-length']) {
+    Aegis.sendMessage(Aegis.Trans(TransKey + 'maxLength'));
+    return;
+  }
+  
+  if(isMute(player)) return;
+
   const playerData = PlayersData.get(player) ?? {};
 });
 
@@ -42,6 +46,13 @@ function isMute(player) {
 
   const data = player.getDynamicProperty('data-mute');
   if(!data) return false;
+
+  const endTime = data.endTime;
+
+  if(typeof endTime == 'number' && endTime < Date.now()) {
+    Aegis.sendMessage(Aegis.Trans(TransKey + 'isMuteDate').replace('<endTime>', new Date(endTime).toLocaleString(Aegis.config.get('region')?.area)), player);
+    return true;
+  }
 
 
   return false;

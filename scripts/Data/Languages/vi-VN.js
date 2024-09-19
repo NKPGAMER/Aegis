@@ -1,16 +1,22 @@
 export default {
-    "aegis.gamemode.adventrue": "phiêu lưu",
-    "aegis.gamemode.survival": "sinh tồn",
-    "aegis.gamemode.creative": "sáng tạo",
-    "aegis.gamemode.spectator": "kháng giả",
-    "aegis.weather.Clear": "trong lành",
-    "aegis.weather.Rain": "mưa",
+    "gamemode.adventrue": "phiêu lưu",
+    "gamemode.survival": "sinh tồn",
+    "gamemode.creative": "sáng tạo",
+    "gamemode.spectator": "kháng giả",
+    "weather.Clear": "trong lành",
+    "weather.Rain": "mưa",
     "aeagis.weather.Thunder": "sấm chớp",
 
     //ui
-    "aegis.ui.change_game_mode": "Thay đổi chế độ chơi",
-    "aegis.ui.change_weather": "Thay đổi thời tiết",
-    "aegis.ui.change_weather.select": "Chọn thời tiết",
-    "aegis.ui.change_weather.duration": "Thời gian tồn tại",
+    "ui.change_game_mode": "Thay đổi chế độ chơi",
+    "ui.change_weather": "Thay đổi thời tiết",
+    "ui.change_weather.select": "Chọn thời tiết",
+    "ui.change_weather.duration": "Thời gian tồn tại",
+    
+    //handlers
+    "handler.chat.maxLength": "Tin nhắn quá dài. Số lượng ký tự cho phép là <length> ký tự",
+
+    "handler.chat.isMute": "Bạn không thể gửi tin nhắn vào lúc này",
+    "handler.chat.isMuteDate": "Bạn đã bị cấm gửi tin nhắn cho đến <endTime>",
     
 }

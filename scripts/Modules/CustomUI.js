@@ -34,7 +34,7 @@ class ActionFormData {
 
   back(callback) {
     this.#buttons.unshift({
-      label: Aegis.Trans('aegis.ui.back_label'),
+      label: Aegis.Trans('ui.back_label'),
       icon: 'textures/ui/icon_import',
       callback: typeof callback == 'function' ? callback : Function.Empty,
       show: true
