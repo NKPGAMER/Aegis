@@ -31,7 +31,7 @@ if(!console.time) {
 
 if(!console.timeEnd) {
   console.timeEnd = (label) => {
-    if(typeof timeLabels[label] == 'number') {
+    if(timeLabels[label]) {
       const duration = Date.now() - timeLabels[label];
       console.warn(`${label}: ${duration.toFixed(2)}ms`);
       delete timeLabels[label] 
