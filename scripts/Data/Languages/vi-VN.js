@@ -15,8 +15,10 @@ export default {
     
     //handlers
     "handler.chat.maxLength": "Tin nhắn quá dài. Số lượng ký tự cho phép là <length> ký tự",
-
+    "handler.chat.fastChat": "Bạn đang gửi tin nhắn quá nhanh! Sống chậm thôi :)",
     "handler.chat.isMute": "Bạn không thể gửi tin nhắn vào lúc này",
     "handler.chat.isMuteDate": "Bạn đã bị cấm gửi tin nhắn cho đến <endTime>",
-    
+
+    "handler.chat.command.unknown": "Không tìm thấy lệnh <command>. Nhâpl <help> để xem danh sách lệnh.",
+    "handler.chat.command.unpremission": "Bạn không có quyền sử dụng lệnh này"
 }
