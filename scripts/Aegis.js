@@ -39,7 +39,6 @@ globalThis.Aegis = (() => {
 
   aegis.runCommand = command => aegis.defaultDimension.runCommand(command);
   aegis.runCommandAsync = command => aegis.defaultDimension.runCommandAsync(command);
-  aegis.events = { subscribe: EventSubscribe, unsubscribe: EventUnsubscribe };
 
   (async () => {
     aegis.ServerType = await new Promise((resolve) => {
@@ -59,24 +58,6 @@ globalThis.Aegis = (() => {
 
   return aegis;
 })();
-
-function EventSubscribe(EventType, EventId, callback, ...options) {
-  const eventType = EventType.startsWith('after') ? 'afterEvents' : EventType.startsWith('before') ? 'beforeEvents' : null;
-  if (!eventType) throw new Error(`Invalid event type: "${EventType}"`);
-
-  const event = world?.[eventType]?.[EventId]?.subscribe;
-  if (!event) throw new Error(`Event id not found: ${EventId}`);
-  event(callback, options.length > 0 ? options : undefined);
-}
-
-function EventUnsubscribe(EventType, EventId, callback) {
-  const eventType = EventType.startsWith('after') ? 'afterEvents' : EventType.startsWith('before') ? 'beforeEvents' : null;
-  if (!eventType) throw new Error(`Invalid event type: "${EventType}"`);
-
-  const event = world?.[eventType]?.[EventId]?.unsubscribe;
-  if (!event) throw new Error(`Event id not found: ${EventId}`);
-  event(callback);
-}
 
 function execute([...commands], target = Aegis.defaultDimension) {
   try {

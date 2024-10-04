@@ -60,8 +60,13 @@ class ActionFormData {
     return this;
   }
 
-  body(value) {
-    this.#form.body((typeof value == 'string' || (typeof value == 'object' && !Array.isArray(value))) ? value : void 0);
+  body(...values) {
+    if(values.some(value => typeof value === 'object')) {
+      values = values.map(value => ({ rawtext: [ typeof value === 'object' ? value : typeof value === 'string' ? { text: value } : "", { text: "\n" } ]}))
+      this.#form.body({ rawtext: values });
+    } else {
+      this.#form.body(values.join('\n'))
+    }
     return this;
   }
 

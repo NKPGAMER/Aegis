@@ -23,5 +23,9 @@
     "max-length": 350,
     "max-consecutive-message": 3,
     "message-cooldown": 3000
+  },
+  "anti-reach": {
+    "enable": true,
+    "maxDistance": 8
   }
 }

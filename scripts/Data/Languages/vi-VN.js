@@ -3,16 +3,17 @@ export default {
     "gamemode.survival": "sinh tồn",
     "gamemode.creative": "sáng tạo",
     "gamemode.spectator": "kháng giả",
-    "weather.Clear": "trong lành",
-    "weather.Rain": "mưa",
-    "aeagis.weather.Thunder": "sấm chớp",
+    "weather.Clear": "Trong lành",
+    "weather.Rain": "Mưa",
+    "aeagis.weather.Thunder": "Sấm chớp",
 
     //ui
+    "ui.select": "Lựa chọn:",
+    "ui.optional": "Không bắt buộc",
     "ui.change_game_mode": "Thay đổi chế độ chơi",
     "ui.change_weather": "Thay đổi thời tiết",
-    "ui.change_weather.select": "Chọn thời tiết",
     "ui.change_weather.duration": "Thời gian tồn tại",
-    
+    "ui.change_weather.success": "",
     //handlers
     "handler.chat.maxLength": "Tin nhắn quá dài. Số lượng ký tự cho phép là <length> ký tự",
     "handler.chat.fastChat": "Bạn đang gửi tin nhắn quá nhanh! Sống chậm thôi :)",

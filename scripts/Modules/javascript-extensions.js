@@ -3,7 +3,7 @@
  */
 
 /*
- * Array.js
+ * Array
  */
 
 if (!Array.prototype.includesObject) {
@@ -19,7 +19,7 @@ if (!Array.prototype.delete) {
 }
 
 /*
- * Console.js
+ * Console
  */
 const Logs = [];
 const { log, warn, error, info } = console;
@@ -57,7 +57,7 @@ Object.defineProperties(console, {
 });
 
 /*
- * Date.js
+ * Date
  */
 
 if (!Date.prototype.isLeapYear) {
@@ -122,7 +122,7 @@ if (!Date.prototype.addYears) {
 }
 
 /*
- * Error.js
+ * Error
  */
 if (!Error.prototype.toString) {
   Error.prototype.toString = function () {
@@ -139,7 +139,7 @@ if (!Error.prototype.toString) {
 }
 
 /*
- * Map.js
+ * Map
  */
 Object.defineProperties(Map.prototype, {
   merge: {
@@ -182,13 +182,13 @@ Object.defineProperties(Map.prototype, {
 
 
 /*
- * Math.js
+ * Math
  */
-const { floor, hypot, max, min } = Math;
+const { hypot, max, min } = Math;
 
 if (!Math.randomInt) {
   Math.randomInt = function (min, max) {
-    return floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 }
 
@@ -212,50 +212,48 @@ if (!Math.secondToTick) {
   };
 }
 
-Object.defineProperties(Math, {
-  floor: {
-    value: (data) => {
-      if (typeof data === 'number') return floor(data);
-      if (typeof data === 'object') return Object.fromEntries(Object.entries(data).map(([k, v]) => [k, floor(v)]));
-      throw new Error("Parameters must be a number or object<number>");
+if (!Math.distanceVector3) {
+  Math.distanceVector3 = (pos1, pos2) => {
+    const dx = pos1.x - pos2.x;
+    const dy = pos1.y - pos2.y;
+    const dz = pos1.z - pos2.z;
+    return Math.sqrt(dx * dx + dy * dy + dz * dz);
+  };
+}
+
+if (!Math.distanceVector2) {
+  Math.distanceVector2 = (pos1, pos2) => {
+    const dx = pos1.x - pos2.x;
+    const dz = pos1.z - pos2.z;
+    return Math.sqrt(dx * dx + dz * dz);
+  };
+}
+
+if (!Math.isInRange) {
+  Math.isInRange = ({ x, y, z }, { location1, location2 }) => {
+    const [xMin, xMax] = [min(location1.x, location2.x), max(location1.x, location2.x)];
+    const [yMin, yMax] = [min(location1.y, location2.y), max(location1.y, location2.y)];
+    const [zMin, zMax] = [min(location1.z, location2.z), max(location1.z, location2.z)];
+    return x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax;
+  };
+}
+
+if (!Math.autoFloor) {
+  Math.autoFloor = (value) => {
+    if (Array.isArray(value)) {
+      return value.filter(i => typeof i === 'number').map(Math.floor);
     }
-  },
-  distance: {
-    value: (v1, v2, includeY = true) => {
-      const { x: x1, y: y1, z: z1 } = v1;
-      const { x: x2, y: y2, z: z2 } = v2;
-      return hypot(x1 - x2, z1 - z2, includeY ? y1 - y2 : 0);
+
+    if (typeof value === 'object') {
+      return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, Math.floor(v)]));
     }
-  },
-  isInRange: {
-    value: ({ x, y, z }, { location1, location2 }) => {
-      const [xMin, xMax] = [min(location1.x, location2.x), max(location1.x, location2.x)];
-      const [yMin, yMax] = [min(location1.y, location2.y), max(location1.y, location2.y)];
-      const [zMin, zMax] = [min(location1.z, location2.z), max(location1.z, location2.z)];
-      return x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax;
-    }
-  },
-  isWithinView: {
-    value: (targetPosition, observerPosition, observerRotation, maxViewAngle) => {
-      const direction = {
-        x: targetPosition.x - observerPosition.x,
-        y: targetPosition.y - observerPosition.y,
-        z: targetPosition.z - observerPosition.z
-      };
-      const magnitude = hypot(direction.x, direction.y, direction.z);
-      const normalized = {
-        x: direction.x / magnitude,
-        z: direction.z / magnitude
-      };
-      const dotProduct = normalized.x * Math.cos(observerRotation.y) + normalized.z * Math.sin(observerRotation.y);
-      const angleToTarget = Math.acos(dotProduct) * (180 / Math.PI);
-      return angleToTarget < maxViewAngle / 2;
-    }
-  }
-});
+
+    throw new TypeError("Parameters must be a Array<number> or Object<number>");
+  };
+}
 
 /*
- * Number.js
+ * Number
  */
 
 if (!Number.prototype.ticksToSeconds) {
@@ -267,7 +265,7 @@ if (!Number.prototype.secondsToTicks) {
 }
 
 /*
- * Object.js
+ * Object
  */
 if (!Object.prototype.equal) {
   Object.prototype.equal = function (obj) {
@@ -280,7 +278,7 @@ if (!Object.prototype.equal) {
   };
 }
 /*
- * String.js
+ * String
  */
 
 if (!String.randomColor) {
@@ -336,64 +334,4 @@ if (!String.toRegex) {
     const [_, pattern, flags] = match;
     return new RegExp(pattern, flags);
   };
-}
-
-/*
- * function.js
- */
-
-if (!Function.prototype.Empty) {
-  Function.prototype.Empty = function () { };
-}
-
-if (!Function.prototype.forceType) {
-  Function.prototype.forceType = function (...expectedTypes) {
-    const originalFunction = this;
-    return (...args) => {
-      if (!expectedTypes.every((type, i) => checkType(type, args[i]))) {
-        throw new TypeError(`Function "${originalFunction.name || "Anonymous"}" receives incorrect parameters.`);
-      }
-      return originalFunction.apply(null, args);
-    };
-  };
-}
-
-
-if (!Function.prototype.validateArgs) {
-  Function.prototype.validateArgs = function (...ArgumentTypes) {
-    const originalFunction = this;
-    return (...args) => {
-      if (!ArgumentTypes.every((type, i) => args[i] instanceof Type)) throw new TypeError(`Function "${originalFunction.name || "Anonymous"}" receives incorrect parameters.`);
-      return originalFunction.apply(null, args);
-    };
-  };
-};
-
-const typeChecks = {
-  bigint: v => typeof v === 'bigint',
-  string: v => typeof v === 'string',
-  number: v => typeof v === 'number',
-  boolean: v => typeof v === 'boolean',
-  object: v => v && typeof v === 'object',
-  function: v => typeof v === 'function',
-  symbol: v => typeof v === 'symbol',
-  undefined: v => v === undefined,
-  array: Array.isArray,
-  json: String.isJSON
-};
-
-function checkType(type, variable) {
-  if (typeof type !== 'string') throw new TypeError('The "type" must be a string');
-  if (type.startsWith('?')) return variable == null || checkType(type.slice(1), variable);
-  return type.split('|').some(t => checkSingleOrCompound(t, variable));
-}
-
-function checkSingleOrCompound(type, variable) {
-  return type.endsWith('[]')
-    ? Array.isArray(variable) && variable.every(item => checkSingle(type.slice(0, -2), item))
-    : checkSingle(type, variable);
-}
-
-function checkSingle(type, variable) {
-  return typeChecks[type]?.(variable) ?? false;
 }
