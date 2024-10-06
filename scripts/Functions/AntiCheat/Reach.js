@@ -31,7 +31,7 @@ registerModule('anti-reach', {
 },
   {
     event: 'playerBreakBlock',
-    type: 'beforeEvents',
+    type: 'before',
     callback: reach
   },
   {
