@@ -1,4 +1,5 @@
 import { world, Player, GameMode } from "@minecraft/server";
+import { registerModule } from "./module";
 import { flag } from "../../Assets/Utils";
 
 const config = Aegis.config.get('anti-reach');
@@ -22,4 +23,20 @@ export default {
     world.beforeEvents.playerBreakBlock.unsubscribe(reach);
     world.beforeEvents.playerPlaceBlock.unsubscribe(reach);
   }
-}
+};
+
+registerModule('anti-reach', {
+  skipAdmin: true,
+  skipModerator: true
+},
+  {
+    event: 'playerBreakBlock',
+    type: 'beforeEvents',
+    callback: reach
+  },
+  {
+    event: 'playerPlaceBlock',
+    type: 'before',
+    callback: reach
+  }
+);
