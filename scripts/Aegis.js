@@ -4,7 +4,7 @@ import { MemoryCache } from './Assets/MemoryCache';
 import languages from './Data/Languages/languages';
 
 const startTick = system.currentTick;
-console.warn('Preparing...');
+const startTime = Date.now();
 
 globalThis.Aegis = (() => {
   const AegisPrefix = '§7[§eAegis§7]§r ';
@@ -46,7 +46,7 @@ globalThis.Aegis = (() => {
         const players = world.getAllPlayers();
         if (players.length > 0) {
           resolve(players.some(({ id }) => localOpId.has(id)) ? 'local' : 'server');
-        } else if (system.currentTick - startTick < 200) {
+        } else if (Date.now() - startTime < 10000) {
           system.runTimeout(checkServerType, 20);
         } else {
           resolve('server');
@@ -71,8 +71,8 @@ function execute([...commands], target = Aegis.defaultDimension) {
       } else if (typeof command == 'object' && !Array.isArray(command)) {
         const { successCount } = await target.runCommandAsync(command.run);
 
-        if(successCount > 0) {
-          if(typeof command.success === 'function') {
+        if (successCount > 0) {
+          if (typeof command.success === 'function') {
             command.success();
           } else {
             execute(command, target);
@@ -98,14 +98,16 @@ function Translation(token) {
 console.warn(`Done... Total: ${(system.currentTick - startTick).toFixed(2)} ticks`);
 
 (async () => {
-  const startImport_modules = system.currentTick;
-  console.warn('Import Modules...');
   await Promise.all([
     import('./Modules/javascript-extensions'),
     import('./Modules/minecraft-extensions'),
     import('./Modules/loadConfig'),
   ]);
-  console.warn(`Done... Total: ${(system.currentTick - startImport_modules).toFixed(2)} ticks`);
-  await import('./index');
-  console.warn('Getting started...');
+  console.warn('Getting started');
+  // Import Modules
+  import('./Functions/AntiCheat/index');
+  import('./Functions/CustomCommands/index');
+  import('./Handlers/Watchdog');
+  import('./Handlers/PlayerJoin');
+  import('./Handlers/ChatSend');
 })();

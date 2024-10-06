@@ -1,5 +1,6 @@
 import { Player, world } from '@minecraft/server';
-import { prefix, commands } from '../CustomCommands/handler';
+import { registerModule } from '../Functions/AntiCheat/module';
+import { prefix, commands } from '../Functions/CustomCommands/handler';
 import Tags from '../Data/Tags';
 const PlayersData = new WeakMap();
 
@@ -16,9 +17,32 @@ const config = {
   "message-cooldown": 3000
 }; //Aegis.config.get('chat-manager');
 const TransKey = 'handler.chat.';
-world.beforeEvents.chatSend.subscribe(event => {
-  const { sender: player, message } = event;
-  event.cancel = true;
+
+function isMute(player) {
+  if (!(player instanceof Player)) return;
+
+  if (player.hasTag(Tags.disable.sendMessage)) {
+    Aegis.sendMessage(Aegis.Trans(TransKey + 'isMute'));
+    return true;
+  }
+
+  const data = player.getDynamicProperty('data-mute');
+  if (!data) return false;
+
+  const endTime = data.endTime;
+
+  if (typeof endTime == 'number' && endTime < Date.now()) {
+    Aegis.sendMessage(Aegis.Trans(TransKey + 'isMuteDate').replace('<endTime>', new Date(endTime).toLocaleString(Aegis.config.get('region')?.area)), player);
+    return true;
+  }
+
+
+  return false;
+}
+
+function handler(eventData) {
+  const { sender: player, message } = eventData;
+  eventData.cancel = true;
 
   if (message.startsWith(prefix)) {
     const args = parseArgs(message.slice(prefix.length));
@@ -29,7 +53,7 @@ world.beforeEvents.chatSend.subscribe(event => {
       if (hasPermission(player, command.permission)) {
         command.func(player, args);
       } else {
-        player.sendMessage("§cYou don't have permission to use this command.");
+        player.sendMessage('§c' + Aegis.Trans('handler.chat.command.unpremission'));
       }
     } else {
       Aegis.sendMessage('§c' + Aegis.Trans('handler.chat.command.unknown')
@@ -56,34 +80,24 @@ world.beforeEvents.chatSend.subscribe(event => {
       Aegis.sendMessage(Aegis.Trans('handler.chat.fastChat'));
     }
   }
-});
-
-function isMute(player) {
-  if (!(player instanceof Player)) return;
-
-  if (player.hasTag(Tags.disable.sendMessage)) {
-    Aegis.sendMessage(Aegis.Trans(TransKey + 'isMute'));
-    return true;
-  }
-
-  const data = player.getDynamicProperty('data-mute');
-  if (!data) return false;
-
-  const endTime = data.endTime;
-
-  if (typeof endTime == 'number' && endTime < Date.now()) {
-    Aegis.sendMessage(Aegis.Trans(TransKey + 'isMuteDate').replace('<endTime>', new Date(endTime).toLocaleString(Aegis.config.get('region')?.area)), player);
-    return true;
-  }
-
-
-  return false;
 }
 
-world.afterEvents.chatSend.subscribe((event) => {
-  const playerData = PlayersData.get(event.sender) ?? {};
-
-  playerData.lastMessage = event.message;
+function updateData(eventData) {
+  const playerData = PlayersData.get(eventData.sender) ?? {};
+  playerData.lastMessage = eventData.message;
   playerData.lastSend = Date.now();
-  PlayersData.set(event.sender, playerData);
-});
+  PlayersData.set(eventData.sender);
+}
+
+registerModule('chat-manager', {},
+  {
+    event: 'chatSend',
+    type: 'before',
+    callback: handler
+  },
+  {
+    event: 'chatSend',
+    type: 'after',
+    callback: updateData
+  }
+);
