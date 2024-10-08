@@ -92,11 +92,4 @@ const updateModule = (id) => {
   console.log(`Module ${id} updated successfully`);
 };
 
-// Example usage:
-registerModule("exampleModule",
-  { showError: true, breakOnError: false, skipAdmin: true },
-  { runInterval: true, interval: 20, callback: () => console.log("Tick event") },
-  { event: "playerJoin", callback: (eventData) => console.log("Player joined:", eventData.player.name) }
-);
-
 export { Modules, registerModule, setup, updateModule };

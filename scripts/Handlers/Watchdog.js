@@ -7,4 +7,4 @@ function watchdogTerminate(event) {
   console.warn(Aegis.Trans('event.Handlers.Watchdog')?.replace('<reason>', event.terminateReason))
 }
 
-system.afterEvents.watchdogTerminate.subscribe(watchdogTerminate);
+system.beforeEvents.watchdogTerminate.subscribe(watchdogTerminate);

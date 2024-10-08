@@ -1,7 +1,8 @@
 import { setup } from './module'
 
-(async () => {
-  await import('./Reach');
-
+(async function(modules) {
+  await Promise.all(modules.map(m => import('./' + m)));
   setup();
-})
+})([
+  'Reach.js'
+]);

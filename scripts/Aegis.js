@@ -3,7 +3,6 @@ import { Database } from './Assets/Database';
 import { MemoryCache } from './Assets/MemoryCache';
 import languages from './Data/Languages/languages';
 
-const startTick = system.currentTick;
 const startTime = Date.now();
 
 globalThis.Aegis = (() => {
@@ -95,19 +94,34 @@ function Translation(token) {
   return language[token] || token;
 }
 
-console.warn(`Done... Total: ${(system.currentTick - startTick).toFixed(2)} ticks`);
+console.warn(`Initialization complete...${(Date.now() - startTime).toFixed(2)}`);
 
 (async () => {
-  await Promise.all([
-    import('./Modules/javascript-extensions'),
-    import('./Modules/minecraft-extensions'),
-    import('./Modules/loadConfig'),
-  ]);
-  console.warn('Getting started');
-  // Import Modules
-  import('./Functions/AntiCheat/index');
-  import('./Functions/CustomCommands/index');
-  import('./Handlers/Watchdog');
-  import('./Handlers/PlayerJoin');
-  import('./Handlers/ChatSend');
+  const loadModules = async (modules, name) => {
+    try {
+      await Promise.all(modules.map(module => import(module)));
+      console.warn(`${name} [Ok]`);
+    } catch (error) {
+      error.name = name;
+      throw error;
+    }
+  };
+
+  try {
+    await loadModules([
+      './Modules/javascript-extensions',
+      './Modules/minecraft-extensions',
+      './Modules/loadConfig'
+    ], 'Aegis-Extension');
+
+    await loadModules([
+      './Functions/AntiCheat/index',
+      './Functions/CustomCommands/index',
+      './Handlers/Watchdog',
+      './Handlers/PlayerJoin',
+      './Handlers/ChatSend'
+    ], 'Aegis-Modules');
+  } catch (error) {
+    console.error(error);
+  }
 })();
