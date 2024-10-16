@@ -1,5 +1,5 @@
 import { world, GameMode } from "@minecraft/server";
-import { ActionFormData, ModalFormData, MessageFormData } from "../../Modules/CustomUI";
+import { ActionFormData, ModalFormData, MessageFormData } from "../../aegis_modules/CustomUI";
 import { ChangeGameMode as setGameMode } from '../../Assets/Utils';
 
 const dimensions = [ 'overworld', 'nether', 'the_end' ]

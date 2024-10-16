@@ -10,7 +10,7 @@
   },
   "customCommand": {
     "enable": true,
-    "prefix": "."
+    "prefix": "!"
   },
   "chat-manager": {
     "enable": true,
@@ -23,6 +23,16 @@
     "max-length": 350,
     "max-consecutive-message": 3,
     "message-cooldown": 3000
+  },
+  "watchdog": {
+    "enable": true,
+    "cencel": true,
+    "warn": true
+  },
+  "afk-detection": {
+    "enable": true,
+    "max-afk-time": 900,
+    "warn-time": 30
   },
   "anti-reach": {
     "enable": true,

@@ -1,10 +1,18 @@
 import { system } from '@minecraft/server';
+import { registerModule } from '../Functions/Modules/module';
 
-const cancel = !!Aegis.config.get('watchdogTerminate') ?? true;
+const config = Aegis.config.get('watchdog');
 
 function watchdogTerminate(event) {
-  event.cancel = cancel;
-  console.warn(Aegis.Trans('event.Handlers.Watchdog')?.replace('<reason>', event.terminateReason))
+  event.cancel = config.cancel;
+
+  if (config.warn) {
+    config.warn(Aegis.Trans('event.Handlers.Watchdog')?.replace('<reason>', event.terminateReason));
+  }
 }
 
-system.beforeEvents.watchdogTerminate.subscribe(watchdogTerminate);
+//system.beforeEvents.watchdogTerminate.subscribe(watchdogTerminate);
+
+registerModule('watchdog', {},
+  { event: 'watchdogTerminate', type: 'before', isSystemEvent: true, callback: watchdogTerminate }
+);

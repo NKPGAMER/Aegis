@@ -1,5 +1,5 @@
 import { world } from "@minecraft/server";
-import { MessageFormData } from "../Modules/CustomUI";
+import { MessageFormData } from "../aegis_modules/CustomUI";
 import { kick, ban, unban } from "../Assets/Utils";
 const BanData = new Aegis.Database('data-ban');
 

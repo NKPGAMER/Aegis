@@ -1,4 +1,4 @@
-var path_custom_config = '../Data/Config', custom_data = {};
+var path_custom_config = '../Data/config', custom_data = {};
 var path_default_config = '../Data/default/config', default_data = {};
 
 async function loadConfig(replace, clearData) {

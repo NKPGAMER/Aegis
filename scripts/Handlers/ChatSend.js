@@ -1,5 +1,5 @@
 import { Player, world } from '@minecraft/server';
-import { registerModule } from '../Functions/AntiCheat/module';
+import { registerModule } from '../Functions/Modules/module';
 import { prefix, commands } from '../Functions/CustomCommands/handler';
 import Tags from '../Data/Tags';
 const PlayersData = new WeakMap();
@@ -65,7 +65,7 @@ function handler(eventData) {
   }
 
   if (message.length > config['max-length']) {
-    Aegis.sendMessage(Aegis.Trans(TransKey + 'maxLength'));
+    Aegis.sendMessage(Aegis.Trans(TransKey + 'maxLength'), player);
     return;
   }
 

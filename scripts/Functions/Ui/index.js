@@ -1,5 +1,5 @@
 import { world, system, Player, GameMode, WeatherType } from "@minecraft/server";
-import { ActionFormData, ModalFormData, MessageFormData } from "../../Modules/CustomUI";
+import { ActionFormData, ModalFormData, MessageFormData } from "../../aegis_modules/CustomUI";
 import { isAdmin, isModerator, setActionBar, getAllItemStack, ItemStackToJSON, JsonToItemStack } from '../../Assets/Utils';
 import * as base from './base'
 

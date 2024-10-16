@@ -14,17 +14,6 @@ function reach(event) {
   }
 }
 
-export default {
-  enable: () => {
-    world.beforeEvents.playerBreakBlock.subscribe(reach);
-    world.beforeEvents.playerPlaceBlock.subscribe(reach);
-  },
-  disable: () => {
-    world.beforeEvents.playerBreakBlock.unsubscribe(reach);
-    world.beforeEvents.playerPlaceBlock.unsubscribe(reach);
-  }
-};
-
 registerModule('anti-reach', {
   skipAdmin: true,
   skipModerator: true

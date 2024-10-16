@@ -68,7 +68,7 @@ function ban(player, time, reason) {
 
   playerData.history.push({ type: 'ban', atTime: currentTime, time: time, reason: reason });
   playerData.status = { type: 'ban', until: time, reason: reason };
-  playerData.info = { name: player.name, id: player.id }
+  playerData.info = { name: player.name, id: player.id };
 
   kick(player, reason);
 }
@@ -83,6 +83,15 @@ function unban(id, clearData = false) {
   }
 
   BanData.set(id, data);
+}
+
+function formatProgressBar(maxTime, currentTime, emptyColor = '§f', filledColor = '§9', reverse = false) {
+  currentTime = Math.min(currentTime, maxTime);
+  const filledChar = Math.round((currentTime / maxTime) * 10);
+  const filledString = '█'.repeat(filledChar);
+  const emptyString = '█'.repeat(10 - filledChar);
+
+  return reverse ? `§r${emptyColor}${emptyString}${filledColor}${filledString}§r` : `§r${filledColor}${filledString}${emptyColor}${emptyString}§r`;
 }
 
 const flag_config = Aegis.config.get('flag');
@@ -174,4 +183,4 @@ function JsonToItemStack(value) {
   }
 }
 
-export { ChangeGameMode, isAdmin, isModerator, setActionBar, flag, kick, ban, unban, getAllItemStack, ItemStackToJSON, JsonToItemStack };
+export { formatProgressBar, ChangeGameMode, isAdmin, isModerator, setActionBar, flag, kick, ban, unban, getAllItemStack, ItemStackToJSON, JsonToItemStack };

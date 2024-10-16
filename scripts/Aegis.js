@@ -81,7 +81,7 @@ function execute([...commands], target = Aegis.defaultDimension) {
       }
     });
   } catch (error) {
-
+    console.error(error)
   }
 
 }
@@ -109,13 +109,13 @@ console.warn(`Initialization complete...${(Date.now() - startTime).toFixed(2)}`)
 
   try {
     await loadModules([
-      './Modules/javascript-extensions',
-      './Modules/minecraft-extensions',
-      './Modules/loadConfig'
+      './aegis_modules/javascript-extensions',
+      './aegis_modules/minecraft-extensions',
+      './aegis_modules/loadConfig'
     ], 'Aegis-Extension');
 
     await loadModules([
-      './Functions/AntiCheat/index',
+      './Functions/Modules/index',
       './Functions/CustomCommands/index',
       './Handlers/Watchdog',
       './Handlers/PlayerJoin',
