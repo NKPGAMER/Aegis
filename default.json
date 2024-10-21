@@ -16,7 +16,7 @@
     "enable": true,
     "chatRank": {
       "enable": true,
-      "join": "§r§7] [§r",
+      "join": "\u00A7r\u00A77] [\u00A7r",
       "start": "§7[",
       "end": "§r§7]"
     },
