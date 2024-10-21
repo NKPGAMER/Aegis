@@ -13,12 +13,12 @@
     "prefix": "!"
   },
   "chat-manager": {
-    "enable": true,
+    "enable": true, 
     "chatRank": {
       "enable": true,
-      "join": "\u00A7r\u00A77] [\u00A7r",
-      "start": "§7[",
-      "end": "§r§7]"
+      "join": "\u00a7r\u00a77] [\u00a7r",
+      "start": "\u00a77[",
+      "end": "\u00a7r\u00a77]"
     },
     "max-length": 350,
     "max-consecutive-message": 3,
