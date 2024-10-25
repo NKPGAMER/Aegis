@@ -1,5 +1,5 @@
 import { world, system } from "@minecraft/server";
-
+// Test
 const spikeLaggingData = new Map();
 
 function calculateDistance(loc1, loc2) {
