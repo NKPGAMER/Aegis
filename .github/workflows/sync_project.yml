@@ -8,10 +8,7 @@ on:
   # Khi có pull_request
   pull_request:
     types: [ opened, reopened, synchronize ]
-
-  # Chạy tự động mỗi 1 phút
-  schedule:
-    - cron: '*/1 * * * *'
+    
   # Cho phép chạy thủ công
   workflow_dispatch:
 
