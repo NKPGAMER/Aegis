@@ -19,7 +19,7 @@ jobs:
     - name: Checkout Aegis-website repository
       uses: actions/checkout@v3
       with:
-        repository: your-username/Aegis-website
+        repository: NKPGAMER/Aegis-website
         token: ${{ secrets.PAT_TOKEN }}
         path: aegis-website
 
